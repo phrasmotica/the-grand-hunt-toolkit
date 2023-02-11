@@ -1,6 +1,8 @@
 import { useState } from "react"
 import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown"
 
+type Dict = { [key: string]: string }
+
 export const RoaminAround = () => {
     const [colour, setColour] = useState("")
     const [shape, setShape] = useState("")
@@ -18,7 +20,7 @@ export const RoaminAround = () => {
         ["op", "ot", "rm", "op", "bc", "yc", "gp", "bm", "oq", "bs"],
     ]
 
-    const colourMap: { [id: string]: string } = {
+    const coloursDict: Dict = {
         "r": "Red",
         "o": "Orange",
         "y": "Yellow",
@@ -26,7 +28,7 @@ export const RoaminAround = () => {
         "g": "Green",
     }
 
-    const shapeMap: { [id: string]: string } = {
+    const shapesDict: Dict = {
         "h": "Hexagon",
         "s": "Star",
         "p": "Pentagon",
@@ -36,25 +38,40 @@ export const RoaminAround = () => {
         "m": "Crescent",
     }
 
-    const colours = [...new Set(data.flatMap(r => r).map(c => c[0]))].sort((x, y) => x.localeCompare(y)).map(c => ({
-        key: c,
-        value: c,
-        text: colourMap[c] + ` (${c})`,
-    }))
+    const generateOptions = (textDict: Dict, index: 0 | 1) => [...new Set(data.flatMap(r => r).map(s => s[index]))]
+        .sort((x, y) => x.localeCompare(y))
+        .map(x => ({
+            key: x,
+            value: x,
+            text: textDict[x] + ` (${x})`,
+        }))
 
-    const shapes = [...new Set(data.flatMap(r => r).map(c => c[1]))].sort((x, y) => x.localeCompare(y)).map(s => ({
-        key: s,
-        value: s,
-        text: shapeMap[s] + ` (${s})`,
-    }))
+    const colours = generateOptions(coloursDict, 0)
+    const shapes = generateOptions(shapesDict, 1)
 
-    const shouldShow = (cell: string) => {
+    const getText = (cell: string) => {
         if (!colour || !shape) {
-            return true
+            return cell
         }
 
-        return cell[0] === colour || cell[1] === shape
+        if (cell[0] === colour || cell[1] === shape) {
+            return cell
+        }
+
+        return ""
     }
+
+    const renderRow = (row: string[], index: number) => (
+        <div key={index} className="row">
+            {row.map(renderCell)}
+        </div>
+    )
+
+    const renderCell = (cell: string, index: number) => (
+        <div key={index} className="cell">
+            <span>{getText(cell)}</span>
+        </div>
+    )
 
     return (
         <div className="container">
@@ -81,22 +98,7 @@ export const RoaminAround = () => {
             </div>
 
             <div className="grid">
-                {data.map((r, i) => (
-                    <div key={i} className="row">
-                        {r.map((c, j) => {
-                            let text = ""
-                            if (shouldShow(c)) {
-                                text = c
-                            }
-
-                            return (
-                                <div key={j} className="cell">
-                                    <span>{text}</span>
-                                </div>
-                            )
-                        })}
-                    </div>
-                ))}
+                {data.map(renderRow)}
             </div>
         </div>
     )
