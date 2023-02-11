@@ -33,10 +33,6 @@
     justify-content: center;
 }
 
-.grid {
-    font-size: calc(10px + 2vmin);
-}
-
 .row {
     display: flex;
 }
@@ -46,13 +42,42 @@
 }
 
 .cell {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16pt;
+}
+
+.cell:not(:first-child) {
+    border-left: 1px solid white;
+}
+
+.container > .poetry-answer:not(:first-child) {
+    margin-top: 10px;
+    border-top: 1px solid white;
+    padding-top: 10px;
+}
+
+.poetry-answer > :not(:first-child) {
+    margin-top: 10px;
+}
+
+.poetry-clue {
+    font-size: 16pt;
+}
+
+.poetry-result-container {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.cell:not(:first-child) {
-    border-left: 1px solid white;
+.poetry-result-container > :not(:first-child) {
+    margin-left: 10px;
+}
+
+.poetry-result {
+    font-size: 24pt;
 }
