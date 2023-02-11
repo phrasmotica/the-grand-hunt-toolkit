@@ -1,0 +1,58 @@
+.App {
+    text-align: center;
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.container {
+    border-radius: calc(2rem / 7);
+    border: 3px solid white;
+    padding: 10px;
+}
+
+.container > *:not(:first-child) {
+    margin-top: 10px;
+}
+
+.options {
+    display: flex;
+}
+
+#orLabel {
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid {
+    font-size: calc(10px + 2vmin);
+}
+
+.row {
+    display: flex;
+}
+
+.row:not(:first-child) {
+    border-top: 1px solid white;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cell:not(:first-child) {
+    border-left: 1px solid white;
+}
