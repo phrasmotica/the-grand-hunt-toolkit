@@ -1,5 +1,5 @@
 import { useState } from "react"
-import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown"
+import { Button, Dropdown } from "semantic-ui-react"
 
 type Dict = { [key: string]: string }
 
@@ -73,6 +73,11 @@ export const RoaminAround = () => {
         </div>
     )
 
+    const reset = () => {
+        setColour("")
+        setShape("")
+    }
+
     return (
         <div className="container">
             <div className="options">
@@ -95,6 +100,16 @@ export const RoaminAround = () => {
                     options={shapes}
                     value={shape}
                     onChange={(e, data) => setShape(data.value as string)} />
+            </div>
+
+            <div>
+                <Button
+                    fluid
+                    color="red"
+                    disabled={!colour || !shape}
+                    onClick={reset}>
+                    Reset
+                </Button>
             </div>
 
             <div className="grid">
