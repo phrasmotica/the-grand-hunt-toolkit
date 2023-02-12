@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Button, Input } from "semantic-ui-react"
+import { Button, Checkbox, Input, Segment } from "semantic-ui-react"
 
 const initialData: string[][] = Array(5).fill(Array(6).fill(""))
 
@@ -7,6 +7,7 @@ export const Journey = () => {
     const [cellData, setCellData] = useState<string[][]>(initialData)
     const [position, setPosition] = useState<[number, number]>([0, 0])
     const [journey, setJourney] = useState("")
+    const [allowWrapping, setAllowWrapping] = useState(false)
 
     const setData = (value: string, y: number, x: number) => {
         if (value.length > 1) {
@@ -40,19 +41,43 @@ export const Journey = () => {
     }
 
     const up = () => {
-        setPosition([position[0], Math.max(0, position[1] - 1)])
+        if (allowWrapping) {
+            let newRow = position[1] <= 0 ? cellData.length - 1 : position[1] - 1
+            setPosition([position[0], newRow])
+        }
+        else {
+            setPosition([position[0], Math.max(0, position[1] - 1)])
+        }
     }
 
     const right = () => {
-        setPosition([Math.min(cellData[0].length - 1, position[0] + 1), position[1]])
+        if (allowWrapping) {
+            let newCol = position[0] >= cellData[0].length - 1 ? 0 : position[0] + 1
+            setPosition([newCol, position[1]])
+        }
+        else {
+            setPosition([Math.min(cellData[0].length - 1, position[0] + 1), position[1]])
+        }
     }
 
     const down = () => {
-        setPosition([position[0], Math.min(cellData.length - 1, position[1] + 1)])
+        if (allowWrapping) {
+            let newRow = position[1] >= cellData.length - 1 ? 0 : position[1] + 1
+            setPosition([position[0], newRow])
+        }
+        else {
+            setPosition([position[0], Math.min(cellData.length - 1, position[1] + 1)])
+        }
     }
 
     const left = () => {
-        setPosition([Math.max(0, position[0] - 1), position[1]])
+        if (allowWrapping) {
+            let newCol = position[0] <= 0 ? cellData[0].length - 1 : position[0] - 1
+            setPosition([newCol, position[1]])
+        }
+        else {
+            setPosition([Math.max(0, position[0] - 1), position[1]])
+        }
     }
 
     const addToJourney = () => {
@@ -101,6 +126,13 @@ export const Journey = () => {
             <div className="journey-buttons">
                 <Button onClick={down}>Down</Button>
             </div>
+
+            <Segment>
+                <Checkbox
+                    label="Allow wrapping"
+                    checked={allowWrapping}
+                    onChange={(e, data) => setAllowWrapping(data.checked || false)} />
+            </Segment>
         </div>
     )
 }
