@@ -1,15 +1,16 @@
 import { useState } from "react"
-import { Button, ButtonGroup, Checkbox, Icon, Input, Segment, Table } from "semantic-ui-react"
+import { Button, Checkbox, Icon, Input, Segment, Table } from "semantic-ui-react"
+
+type Position = [number, number]
 
 const initialClues: string[] = Array(9).fill("")
 const initialCellData: string[][] = Array(5).fill(Array(6).fill(""))
 
 export const Journey = () => {
     const [clues, setClues] = useState(initialClues)
-    const [clueCount, setClueCount] = useState(9)
 
     const [cellData, setCellData] = useState(initialCellData)
-    const [position, setPosition] = useState<[number, number]>([0, 0])
+    const [position, setPosition] = useState<Position>([0, 0])
     const [journey, setJourney] = useState("")
     const [allowWrapping, setAllowWrapping] = useState(false)
 
@@ -51,52 +52,86 @@ export const Journey = () => {
         )
     }
 
-    const up = () => {
+    const moveUp = (pos: Position) => {
         if (allowWrapping) {
-            let newRow = position[1] <= 0 ? cellData.length - 1 : position[1] - 1
-            setPosition([position[0], newRow])
+            let newRow = pos[1] <= 0 ? cellData.length - 1 : pos[1] - 1
+            return [pos[0], newRow] as Position
         }
-        else {
-            setPosition([position[0], Math.max(0, position[1] - 1)])
-        }
+
+        return [pos[0], Math.max(0, pos[1] - 1)] as Position
     }
 
-    const right = () => {
+    const up = () => setPosition(moveUp(position))
+
+    const moveRight = (pos: Position) => {
         if (allowWrapping) {
-            let newCol = position[0] >= cellData[0].length - 1 ? 0 : position[0] + 1
-            setPosition([newCol, position[1]])
+            let newCol = pos[0] >= cellData[0].length - 1 ? 0 : pos[0] + 1
+            return [newCol, pos[1]] as Position
         }
-        else {
-            setPosition([Math.min(cellData[0].length - 1, position[0] + 1), position[1]])
-        }
+
+        return [Math.min(cellData[0].length - 1, pos[0] + 1), pos[1]] as Position
     }
 
-    const down = () => {
+    const right = () => setPosition(moveRight(position))
+
+    const moveDown = (pos: Position) => {
         if (allowWrapping) {
-            let newRow = position[1] >= cellData.length - 1 ? 0 : position[1] + 1
-            setPosition([position[0], newRow])
+            let newRow = pos[1] >= cellData.length - 1 ? 0 : pos[1] + 1
+            return [pos[0], newRow] as Position
         }
-        else {
-            setPosition([position[0], Math.min(cellData.length - 1, position[1] + 1)])
-        }
+
+        return [pos[0], Math.min(cellData.length - 1, pos[1] + 1)] as Position
     }
 
-    const left = () => {
+    const down = () => setPosition(moveDown(position))
+
+    const moveLeft = (pos: Position) => {
         if (allowWrapping) {
-            let newCol = position[0] <= 0 ? cellData[0].length - 1 : position[0] - 1
-            setPosition([newCol, position[1]])
+            let newCol = pos[0] <= 0 ? cellData[0].length - 1 : pos[0] - 1
+            return [newCol, pos[1]] as Position
         }
-        else {
-            setPosition([Math.max(0, position[0] - 1), position[1]])
-        }
+
+        return [Math.max(0, pos[0] - 1), pos[1]] as Position
     }
 
-    const addToJourney = () => {
-        let newChar = cellData[position[1]][position[0]]
+    const left = () => setPosition(moveLeft(position))
+
+    const addToJourney = (pos: Position) => {
+        let newChar = cellData[pos[1]][pos[0]]
         setJourney(journey + newChar)
     }
 
     const nothingToAdd = () => !cellData[position[1]][position[0]]
+
+    const apply = (directions: string[]) => {
+        let newPos = position
+
+        for (let dir of directions) {
+            switch (dir) {
+                case "U":
+                    newPos = moveUp(newPos)
+                    break
+
+                case "R":
+                    newPos = moveRight(newPos)
+                    break
+
+                case "D":
+                    newPos = moveDown(newPos)
+                    break
+
+                case "L":
+                    newPos = moveLeft(newPos)
+                    break
+
+                default:
+                    break
+            }
+        }
+
+        setPosition(newPos)
+        addToJourney(newPos)
+    }
 
     return (
         <div className="columns">
@@ -106,11 +141,12 @@ export const Journey = () => {
                         <Table.Row>
                             <Table.HeaderCell>Clue</Table.HeaderCell>
                             <Table.HeaderCell>Directions</Table.HeaderCell>
+                            <Table.HeaderCell>Apply</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        {clues.slice(0, clueCount).map((c, i) => (
+                        {clues.map((c, i) => (
                             <Table.Row>
                                 <Table.Cell>
                                     <Input
@@ -120,30 +156,19 @@ export const Journey = () => {
                                 </Table.Cell>
 
                                 <Table.Cell>
-                                    <span>{extract(c).join(", ") || "?"}</span>
+                                    <span>{extract(c).join(", ") || "-"}</span>
+                                </Table.Cell>
+
+                                <Table.Cell>
+                                    <Button
+                                        icon
+                                        color="green"
+                                        onClick={() => apply(extract(c))}>
+                                        <Icon fitted name="play" />
+                                    </Button>
                                 </Table.Cell>
                             </Table.Row>
                         ))}
-
-                        <Table.Row>
-                            <Table.Cell colSpan={2}>
-                                <ButtonGroup fluid>
-                                    <Button
-                                        icon
-                                        disabled={clueCount >= 9}
-                                        onClick={() => setClueCount(clueCount + 1)}>
-                                        <Icon fitted name="add" />
-                                    </Button>
-
-                                    <Button
-                                        icon
-                                        disabled={clueCount <= 1}
-                                        onClick={() => setClueCount(clueCount - 1)}>
-                                        <Icon fitted name="minus" />
-                                    </Button>
-                                </ButtonGroup>
-                            </Table.Cell>
-                        </Table.Row>
                     </Table.Body>
                 </Table>
             </div>
@@ -176,7 +201,7 @@ export const Journey = () => {
                     <Button
                         color="green"
                         disabled={nothingToAdd()}
-                        onClick={addToJourney}>
+                        onClick={() => addToJourney(position)}>
                         Add
                     </Button>
 
