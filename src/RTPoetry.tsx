@@ -30,8 +30,14 @@ export const RTPoetry = () => {
     ]
 
     return (
-        <div className="container">
-            {data.map(q => <Answer text={q.text} index={q.index} />)}
+        <div>
+            <div className="description">
+                <p>This did not help us solve the puzzle. We thought we were meant to Google around for some item that might be made of silver or metal that could be dug up from the ground, and index that word with the numbers in the brackets. Turns out the Rolling Stones had a commemorative <em>silver</em> coin minted for them...</p>
+            </div>
+
+            <div className="container">
+                {data.map(q => <Answer text={q.text} index={q.index} />)}
+            </div>
         </div>
     )
 }

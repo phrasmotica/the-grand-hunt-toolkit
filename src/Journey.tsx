@@ -308,12 +308,12 @@ export const Journey = () => {
 
     const controlPanes = [
         {
-            menuItem: "Buttons",
-            render: renderButtons
-        },
-        {
             menuItem: "Clues",
             render: renderClues
+        },
+        {
+            menuItem: "Buttons",
+            render: renderButtons
         },
     ]
 
@@ -383,14 +383,14 @@ export const Journey = () => {
                     <ButtonGroup>
                         <Button
                             color="green"
-                            disabled={!journey}
+                            disabled={journey.length <= 0}
                             onClick={saveJourney}>
                             Save Journey
                         </Button>
 
                         <Button
                             color="red"
-                            disabled={!journey}
+                            disabled={journey.length <= 0}
                             onClick={reset}>
                             Reset
                         </Button>
@@ -446,7 +446,7 @@ export const Journey = () => {
 
                         <Table.Body>
                             {maps.length <= 0 && <Table.Row>
-                                <Table.Cell className="placeholder-cell">
+                                <Table.Cell className="placeholder-cell" colSpan={2}>
                                     None yet!
                                 </Table.Cell>
                             </Table.Row>}

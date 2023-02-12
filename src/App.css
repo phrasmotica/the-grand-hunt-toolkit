@@ -12,6 +12,16 @@
     color: white;
 }
 
+.ui.menu > a.item {
+    flex: 1;
+    justify-content: center;
+}
+
+.description {
+    width: 600px;
+    margin-bottom: 1rem;
+}
+
 .columns {
     display: flex;
     align-items: flex-start;
