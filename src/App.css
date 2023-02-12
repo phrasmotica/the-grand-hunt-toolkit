@@ -18,7 +18,7 @@
     padding: 10px;
 }
 
-.container > *:not(:first-child) {
+.container > :not(:first-child) {
     margin-top: 10px;
 }
 
@@ -80,4 +80,19 @@
 
 .poetry-result {
     font-size: 24pt;
+}
+
+.cell.journey {
+    width: 80px;
+    height: 80px;
+}
+
+.cell.journey.highlight {
+    background-color: rgb(180, 198, 231);
+}
+
+.cell.journey > .ui.input {
+    width: 60px;
+    height: 60px;
+    text-align: center;
 }

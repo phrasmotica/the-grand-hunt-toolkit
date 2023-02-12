@@ -1,5 +1,6 @@
 import { Tab } from "semantic-ui-react"
 
+import { Journey } from "./Journey"
 import { RoaminAround } from "./RoaminAround"
 import { RTPoetry } from "./RTPoetry"
 
@@ -13,6 +14,10 @@ const panes = [
     {
         menuItem: "RT Poetry",
         render: () => <RTPoetry />
+    },
+    {
+        menuItem: "Journey",
+        render: () => <Journey />
     },
 ]
 
