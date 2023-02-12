@@ -12,6 +12,18 @@
     color: white;
 }
 
+.columns {
+    display: flex;
+}
+
+.columns > :not(:first-child) {
+    margin-left: 1rem!important;
+}
+
+.clue-inputs > :not(:first-child) {
+    margin-top: 5px!important;
+}
+
 .container {
     border-radius: calc(2rem / 7);
     border: 3px solid white;
