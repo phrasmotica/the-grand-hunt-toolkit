@@ -82,6 +82,23 @@
     font-size: 24pt;
 }
 
+.journey-string-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.journey-string-container > :not(:first-child) {
+    margin-left: 5px!important;
+    margin-right: 0px!important;
+}
+
+.journey-string {
+    flex-grow: 1;
+    font-size: 16pt;
+    border-bottom: 1px solid white;
+}
+
 .cell.journey {
     width: 80px;
     height: 80px;
@@ -94,5 +111,19 @@
 .cell.journey > .ui.input {
     width: 60px;
     height: 60px;
+}
+
+.cell.journey > .ui.input > input {
+    padding: 5px;
     text-align: center;
+    font-size: 24pt;
+}
+
+.journey-buttons > .ui.button {
+    width: 100px;
+    margin-right: 0px;
+}
+
+.journey-buttons > .ui.button:not(:first-child) {
+    margin-left: 10px;
 }
