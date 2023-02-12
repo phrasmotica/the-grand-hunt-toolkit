@@ -14,6 +14,7 @@
 
 .columns {
     display: flex;
+    align-items: flex-start;
 }
 
 .columns > :not(:first-child) {
@@ -94,6 +95,10 @@
     font-size: 24pt;
 }
 
+.controls {
+    min-width: 400px;
+}
+
 .journey-string-container {
     display: flex;
     align-items: center;
@@ -131,12 +136,16 @@
     font-size: 24pt;
 }
 
-.journey-buttons > .ui.button {
+.journey-buttons > :not(:first-child) {
+    margin-top: 10px;
+}
+
+.journey-buttons .ui.button {
     width: 100px;
     margin-right: 0px;
 }
 
-.journey-buttons > .ui.button:not(:first-child) {
+.journey-buttons .ui.button:not(:first-child) {
     margin-left: 10px;
 }
 
@@ -154,7 +163,7 @@
 }
 
 .save-data {
-    min-width: 200px;
+    min-width: 300px;
 }
 
 .save-data > :not(:first-child) {
