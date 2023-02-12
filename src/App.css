@@ -139,3 +139,28 @@
 .journey-buttons > .ui.button:not(:first-child) {
     margin-left: 10px;
 }
+
+.load-map {
+    display: flex;
+}
+
+.load-map > :not(:first-child) {
+    margin-left: 10px!important;
+    margin-right: 0px!important;
+}
+
+.load-map > .ui.input {
+    flex-grow: 1;
+}
+
+.save-data {
+    min-width: 200px;
+}
+
+.save-data > :not(:first-child) {
+    margin-top: 10px;
+}
+
+.placeholder-cell {
+    text-align: center!important;
+}

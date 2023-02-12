@@ -1,18 +1,26 @@
 import { useState } from "react"
-import { Button, Checkbox, Icon, Input, Segment, Table } from "semantic-ui-react"
+import { Button, ButtonGroup, Checkbox, Icon, Input, Segment, Table } from "semantic-ui-react"
+
+type Map = string[][]
 
 type Position = [number, number]
 
 const initialClues: string[] = Array(9).fill("")
-const initialCellData: string[][] = Array(5).fill(Array(6).fill(""))
+const initialMap: Map = Array(5).fill(Array(6).fill(""))
 
 export const Journey = () => {
     const [clues, setClues] = useState(initialClues)
 
-    const [cellData, setCellData] = useState(initialCellData)
+    const [map, setMap] = useState(initialMap)
     const [position, setPosition] = useState<Position>([0, 0])
     const [journey, setJourney] = useState("")
     const [allowWrapping, setAllowWrapping] = useState(false)
+
+    const [mapToLoad, setMapToLoad] = useState("")
+
+    const [maps, setMaps] = useState<Map[]>([])
+
+    const [journeys, setJourneys] = useState<string[]>([])
 
     const setClue = (clue: string, index: number) => {
         let newClues = clues.map((c, i) => i === index ? clue : c)
@@ -26,11 +34,11 @@ export const Journey = () => {
             return
         }
 
-        let newData = cellData.map((row, r) => row.map((cell, c) => {
+        let newData = map.map((row, r) => row.map((cell, c) => {
             return r === y && c === x ? value : cell
         }))
 
-        setCellData(newData)
+        setMap(newData)
     }
 
     const renderRow = (row: string[], y: number) => (
@@ -54,54 +62,63 @@ export const Journey = () => {
 
     const moveUp = (pos: Position) => {
         if (allowWrapping) {
-            let newRow = pos[1] <= 0 ? cellData.length - 1 : pos[1] - 1
+            let newRow = pos[1] <= 0 ? map.length - 1 : pos[1] - 1
             return [pos[0], newRow] as Position
         }
 
         return [pos[0], Math.max(0, pos[1] - 1)] as Position
     }
 
-    const up = () => setPosition(moveUp(position))
-
     const moveRight = (pos: Position) => {
         if (allowWrapping) {
-            let newCol = pos[0] >= cellData[0].length - 1 ? 0 : pos[0] + 1
+            let newCol = pos[0] >= map[0].length - 1 ? 0 : pos[0] + 1
             return [newCol, pos[1]] as Position
         }
 
-        return [Math.min(cellData[0].length - 1, pos[0] + 1), pos[1]] as Position
+        return [Math.min(map[0].length - 1, pos[0] + 1), pos[1]] as Position
     }
-
-    const right = () => setPosition(moveRight(position))
 
     const moveDown = (pos: Position) => {
         if (allowWrapping) {
-            let newRow = pos[1] >= cellData.length - 1 ? 0 : pos[1] + 1
+            let newRow = pos[1] >= map.length - 1 ? 0 : pos[1] + 1
             return [pos[0], newRow] as Position
         }
 
-        return [pos[0], Math.min(cellData.length - 1, pos[1] + 1)] as Position
+        return [pos[0], Math.min(map.length - 1, pos[1] + 1)] as Position
     }
-
-    const down = () => setPosition(moveDown(position))
 
     const moveLeft = (pos: Position) => {
         if (allowWrapping) {
-            let newCol = pos[0] <= 0 ? cellData[0].length - 1 : pos[0] - 1
+            let newCol = pos[0] <= 0 ? map[0].length - 1 : pos[0] - 1
             return [newCol, pos[1]] as Position
         }
 
         return [Math.max(0, pos[0] - 1), pos[1]] as Position
     }
 
-    const left = () => setPosition(moveLeft(position))
-
     const addToJourney = (pos: Position) => {
-        let newChar = cellData[pos[1]][pos[0]]
+        let newChar = map[pos[1]][pos[0]]
         setJourney(journey + newChar)
     }
 
-    const nothingToAdd = () => !cellData[position[1]][position[0]]
+    const loadMap = (mapStr: string) => {
+        let newMap = []
+        let index = 0
+
+        for (let r = 0; r < map.length; r++) {
+            let newRow = []
+
+            for (let c = 0; c < map[0].length; c++) {
+                newRow.push(mapStr[index])
+                index++
+            }
+
+            newMap.push(newRow)
+        }
+
+        setMap(newMap)
+        setMapToLoad("")
+    }
 
     const apply = (directions: string[]) => {
         let newPos = position
@@ -179,37 +196,57 @@ export const Journey = () => {
                         <p>{journey || "?"}</p>
                     </div>
 
-                    <Button
-                        color="red"
-                        disabled={!journey}
-                        onClick={() => setJourney("")}>
-                        Reset
-                    </Button>
+                    <ButtonGroup>
+                        <Button
+                            color="green"
+                            disabled={!journey}
+                            onClick={() => setJourneys([...journeys, journey])}>
+                            Save Journey
+                        </Button>
+
+                        <Button
+                            color="red"
+                            disabled={!journey}
+                            onClick={() => setJourney("")}>
+                            Reset
+                        </Button>
+                    </ButtonGroup>
                 </div>
 
                 <div className="grid">
-                    {cellData.map(renderRow)}
+                    {map.map(renderRow)}
                 </div>
 
-                <div className="journey-buttons">
-                    <Button onClick={up}>Up</Button>
-                </div>
-
-                <div className="journey-buttons">
-                    <Button onClick={left}>Left</Button>
+                <div className="load-map">
+                    <Input
+                        placeholder="Load map"
+                        value={mapToLoad}
+                        onChange={(e, data) => setMapToLoad(data.value as string)} />
 
                     <Button
-                        color="green"
-                        disabled={nothingToAdd()}
-                        onClick={() => addToJourney(position)}>
-                        Add
+                        color="yellow"
+                        disabled={!mapToLoad}
+                        onClick={() => loadMap(mapToLoad)}>
+                        Load Map
                     </Button>
-
-                    <Button onClick={right}>Right</Button>
                 </div>
 
-                <div className="journey-buttons">
-                    <Button onClick={down}>Down</Button>
+                <div>
+                    <ButtonGroup fluid>
+                        <Button
+                            color="green"
+                            disabled={!map.flatMap(r => r).some(c => c.length > 0)}
+                            onClick={() => setMaps([...maps, map])}>
+                            Save Map
+                        </Button>
+
+                        <Button
+                            color="red"
+                            disabled={!map.flatMap(r => r).some(c => c.length > 0)}
+                            onClick={() => setMap(initialMap)}>
+                            Clear Map
+                        </Button>
+                    </ButtonGroup>
                 </div>
 
                 <Segment>
@@ -218,6 +255,70 @@ export const Journey = () => {
                         checked={allowWrapping}
                         onChange={(e, data) => setAllowWrapping(data.checked || false)} />
                 </Segment>
+            </div>
+
+            <div className="save-data">
+                <div className="maps">
+                    <Table>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Maps</Table.HeaderCell>
+                                <Table.HeaderCell>Copy</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {maps.length <= 0 && <Table.Row>
+                                <Table.Cell className="placeholder-cell" colSpan={2}>
+                                    None yet!
+                                </Table.Cell>
+                            </Table.Row>}
+
+                            {maps.map(m => (
+                                <Table.Row>
+                                    <Table.Cell>
+                                        {m.flatMap(r => r).join("")}
+                                    </Table.Cell>
+
+                                    <Table.Cell>
+                                        <Button
+                                            icon
+                                            color="yellow"
+                                            onClick={() => navigator.clipboard.writeText(m.flatMap(r => r).join(""))}>
+                                            <Icon fitted name="copy" />
+                                        </Button>
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
+                </div>
+
+                <div className="guesses">
+                    <Table>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Guesses</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body>
+                            {journeys.length <= 0 && <Table.Row>
+                                <Table.Cell className="placeholder-cell">
+                                    None yet!
+                                </Table.Cell>
+                            </Table.Row>}
+
+                            {journeys.map(g => (
+                                <Table.Row>
+                                    <Table.Cell>
+                                        {g}
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
+                </div>
             </div>
         </div>
     )
